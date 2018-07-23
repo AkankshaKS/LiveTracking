@@ -1,18 +1,18 @@
 package com.example.shiz.livetracking;
-/*
+
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
 
-@Database(entities = { EntityRoom.class }, version = 1)
-public abstract class Roomdbse extends RoomDatabase {
+@Database(entities = { EntityRoom.class }, version = 2,exportSchema = false)
+public abstract class AppDatabase extends RoomDatabase {
 
-    public abstract Roomdao getRoomdao();
-    private static Roomdbse roomDB;
+    public abstract RoomDao getRoomDao();
+    private static AppDatabase roomDB;
 
-    static Roomdbse getInstance(Context context) {
+    static AppDatabase getInstance(Context context) {
 
         if (null == roomDB) {
             roomDB = buildDatabaseInstance(context);
@@ -20,10 +20,11 @@ public abstract class Roomdbse extends RoomDatabase {
         return roomDB;
     }
 
-    private static Roomdbse buildDatabaseInstance(Context context) {
+    private static AppDatabase buildDatabaseInstance(Context context) {
         return Room.databaseBuilder(context.getApplicationContext(),
-                Roomdbse.class,
+                AppDatabase.class,
                 "Location-database")
+                .fallbackToDestructiveMigration()
                 .allowMainThreadQueries().build();
     }
 
@@ -35,4 +36,4 @@ public abstract class Roomdbse extends RoomDatabase {
     }
 
 }
-*/
+

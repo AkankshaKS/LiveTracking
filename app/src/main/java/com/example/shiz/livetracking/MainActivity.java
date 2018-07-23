@@ -9,7 +9,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
     EditText name,email,password,Mobile;
-    Button signup;
+    Button signup,login;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,7 +19,9 @@ public class MainActivity extends AppCompatActivity {
         email = (EditText) findViewById(R.id.email);
         password = (EditText) findViewById(R.id.password);
         Mobile = (EditText) findViewById(R.id.mobile);
+        login=(Button)findViewById(R.id.login);
         signup = (Button) findViewById(R.id.signup);
+
 
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -37,6 +39,15 @@ public class MainActivity extends AppCompatActivity {
                     finish();
                     Toast.makeText(MainActivity.this, "Successfully Registered please Sign in", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in = new Intent(MainActivity.this, Login.class);
+                startActivity(in);
+                finish();
             }
         });
 

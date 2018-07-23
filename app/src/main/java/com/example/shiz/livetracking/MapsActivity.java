@@ -1,8 +1,10 @@
 package com.example.shiz.livetracking;
 
+import android.arch.lifecycle.LiveData;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -21,8 +23,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Marker;
 
+import java.lang.ref.WeakReference;
+import java.util.List;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks, LocationListener, View.OnClickListener {
+        GoogleApiClient.ConnectionCallbacks, LocationListener, View.OnClickListener, GoogleMap.OnMarkerClickListener {
     private GoogleMap mMap;
     GoogleApiClient mGoogleApiClient;
     Marker mLocationMarker;
@@ -31,6 +36,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Button btnstop;
     LocationListener locationListener;
     LocationManager locationManager;
+    private AppDatabase roomDatabase;
+    private LiveData<List<EntityRoom>> mAllLocations;
+    private EntityRoom loc;
+
 
 
     @Override
@@ -46,7 +55,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         final Button button = (Button) findViewById(R.id.btnStop);
-
+        roomDatabase = AppDatabase.getInstance(MapsActivity.this);
 
     }
 
@@ -103,7 +112,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         // Specify what kind of map you want to display. In this example I’m sticking with the
         // classic, “Normal” map
-
+        mMap.setOnMarkerClickListener(this);
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -211,13 +220,46 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onClick(View v) {
         btnstop.setOnClickListener((View.OnClickListener) this);
         if (v == btnstop) {
-
-
-
             locationManager.removeUpdates((android.location.LocationListener) locationListener);
-
-
-            }
         }
+    }
+
+        @Override
+        public boolean onMarkerClick (Marker marker){
+
+        MapsActivity map = new MapsActivity();
+        map.getLocation();
+        roomDatabase.getRoomDao().update(loc);
+        return true;
+
+    }
+
+    public void getLocation()
+    {
+        new RetrieveTask(this).execute();
+    }
+
+
+
+    private static class RetrieveTask extends AsyncTask<Void, Void, EntityRoom> {
+
+        private WeakReference<MapsActivity> activityReference;
+        private EntityRoom loc;
+
+        // only retain a weak reference to the activity
+        RetrieveTask(MapsActivity context) {
+            activityReference = new WeakReference<>(context);
+        }
+
+        @Override
+        protected EntityRoom doInBackground(Void... voids)
+        {
+                activityReference.get().roomDatabase.getRoomDao().insert(loc);
+            return loc;
+
+        }
+
+        }
+
     }
 

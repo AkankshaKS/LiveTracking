@@ -15,7 +15,7 @@ public class SharedPref {
     //key for preferences
     private String MOBILE="mobile";
 
-    private String PREFERENCES="spfpref";
+    public String PREFERENCES="spfpref";
     //key for is user login
     private String ISLOGIN="login";
     // Shared Preferences variable
